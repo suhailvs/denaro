@@ -66,3 +66,9 @@ The last block with a reward will be the `458733`th, with a reward of `0.3125`.
 Subsequent blocks won't have a block reward.  
 Reward will be added the fees of the transactions included in the block.  
 A transaction may also have no fees at all.  
+
+
+## get address info
+
+<http://localhost:3006/get_address_info?address=DenarodT4s8p7JG5jvQCKDcXZaKMep49hWf3Ry4KE9YAr>
+<https://denaro-node.gaetano.eu.org/get_address_info?address=DenarodT4s8p7JG5jvQCKDcXZaKMep49hWf3Ry4KE9YAr>
