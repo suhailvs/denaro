@@ -178,9 +178,9 @@ async def sync_blockchain(node_url: str = None):
 async def startup():
     global db
     db = await Database.create(
-        user=environ.get('DENARO_DATABASE_USER', 'denaro'),
-        password=environ.get('DENARO_DATABASE_PASSWORD', ''),
-        database=environ.get('DENARO_DATABASE_NAME', 'denaro'),
+        user=environ.get('DENARO_DATABASE_USER', 'postgres'),
+        password=environ.get('DENARO_DATABASE_PASSWORD', 'root'),
+        database=environ.get('DENARO_DATABASE_NAME', 'denaro2'),
         host=environ.get('DENARO_DATABASE_HOST', None)
     )
 

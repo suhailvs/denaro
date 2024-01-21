@@ -14,7 +14,7 @@ def get_transactions_merkle_tree(transactions):
     return hashlib.sha256(b''.join(bytes.fromhex(transaction) for transaction in transactions)).hexdigest()
 
 
-NODE = sys.argv[3].strip('/')+'/' if len(sys.argv) >= 4 else 'http://localhost:3006/'
+NODE = sys.argv[3].strip('/')+'/' if len(sys.argv) >= 4 else 'http://localhost:3002/'
 
 
 def run(start: int = 0, step: int = 1, res: dict = None):

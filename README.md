@@ -1,18 +1,13 @@
 denaro
 ======
 
-**denaro**, _'money' in italian_, is a cryptocurrency written in Python.  
-Maximum supply is 30.062.005.  
-Maximum decimal digits count is 6.  
-Blocks are generated every ~3 minutes, with a size limit of 2MB per block.  
-Assuming an average transaction to be composed by 5 inputs and 2 outputs, that are 250 bytes, a block can contain ~8300 transactions, which means ~40 transactions per second.    
-
 ## Setup with Docker
 + Build the base image with `make build`
 + `$ docker-compose up -d`
 
-## Installation
+## Setup without Docker
 
+#### Optional:
 Before installing denaro, you need to create the postgresql database.  
 You can find the schema in [schema.sql](schema.sql).  
 You have to set environmental variables for database access:
@@ -21,25 +16,57 @@ You have to set environmental variables for database access:
 - `DENARO_DATABASE_NAME`, default to `denaro`.  
 - `DENARO_DATABASE_HOST`, default to `127.0.0.1`.  
 
+#### Installation:
 
 ```bash
-# install postgresql
-createdb denaro
-```
-
-Then install denaro.  
-
-```bash
+# create databsase
+createdb denaro2 -U postgres
 git clone https://github.com/denaro-coin/denaro
 cd denaro
-psql -d denaro -f schema.sql
+psql -d denaro2 -f schema.sql -U postgres
+sudo apt-get install python3-dev libgmp3-dev
 pip3 install -r requirements.txt
-uvicorn denaro.node.main:app --port 3006
+uvicorn denaro.node.main:app --port 3002
 ```
+
+Mine a coin:
+
+```bash
+python denaro/wallet/wallet.py createwallet
+python miner.py DX9n7N3t3yBqdixnYHK4td6CPPcH3D8zsVcF6FQtvdQ6b
+python denaro/wallet/wallet.py send -to DYAYzytb555iszf7CryahqtSNwVNkyzSFaRSXYBXJzzsT -d 10
+python denaro/wallet/wallet.py balance
+```
+
+See on explorer:
+
+```bash
+cd explorer
+python3 -m http.server 
+```
+
+Now visit: http://localhost:8000/
+
+clone the same repo again and replace `denaro2` with `denaro1` and port `3002` with `3001`
 
 Node should now sync the blockchain and start working
 
+## Deployment
 
+https://stackoverflow.com/a/68184694/2351696
+
+```bash
+pip install gunicorn
+gunicorn denaro.node.main:app -w 1 --timeout 150 -k uvicorn.workers.UvicornWorker -b 127.0.0.1:3002 --daemon
+
+sudo a2enmod proxy_http
+<VirtualHost *:80>
+    ServerName denaro-node.stackschools.com
+    ProxyPreserveHost On
+    ProxyPass / http://localhost:3002/
+    ProxyPassReverse / http://localhost:3002/
+</VirtualHost>
+```
 ## Mining
 
 denaro uses a PoW system.  
@@ -66,3 +93,13 @@ The last block with a reward will be the `458733`th, with a reward of `0.3125`.
 Subsequent blocks won't have a block reward.  
 Reward will be added the fees of the transactions included in the block.  
 A transaction may also have no fees at all.  
+
+## Dump and Load database
+
+```
+$ sudo su postgres
+$ pg_dump -d denaro2 > /tmp/file.sql
+
+# load
+$ psql -U postgres -d denaro2 < file.sql
+```

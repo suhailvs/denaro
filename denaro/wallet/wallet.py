@@ -17,9 +17,9 @@ from denaro.constants import CURVE
 from denaro.helpers import point_to_string, sha256
 
 Database.credentials = {
-    'user': os.environ.get('DENARO_DATABASE_USER', 'gaetano'),
-    'password': os.environ.get('DENARO_DATABASE_PASSWORD', ''),
-    'database': os.environ.get('DENARO_DATABASE_NAME', 'denaro')
+    'user': os.environ.get('DENARO_DATABASE_USER', 'postgres'),
+    'password': os.environ.get('DENARO_DATABASE_PASSWORD', 'root'),
+    'database': os.environ.get('DENARO_DATABASE_NAME', 'denaro2')
 }
 
 
@@ -74,11 +74,14 @@ async def main():
 
         tx = await create_transaction(db.get('private_keys'), receiver, amount, string_to_bytes(message))
         try:
-            requests.get('http://localhost:3006/push_tx', {'tx_hex': tx.hex()}, timeout=10)
+            requests.get('http://localhost:3002/push_tx', {'tx_hex': tx.hex()}, timeout=10)
+            print('self')
+            # requests.get('http://localhost:3006/push_tx', {'tx_hex': tx.hex()}, timeout=10)
         except Exception as e:
             print(f'Could not push transaction to local node: {e}')
             await denaro_database.add_pending_transaction(tx)
-            requests.get('https://denaro-node.gaetano.eu.org/push_tx', {'tx_hex': tx.hex()}, timeout=10)
+            # requests.get('https://denaro-node.gaetano.eu.org/push_tx', {'tx_hex': tx.hex()}, timeout=10)
+            requests.get('http://localhost:3001/push_tx', {'tx_hex': tx.hex()}, timeout=10)
         print(f'Transaction pushed. Transaction hash: {sha256(tx.hex())}')
 
 
