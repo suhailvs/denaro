@@ -101,5 +101,6 @@ $ sudo su postgres
 $ pg_dump -d denaro2 > /tmp/file.sql
 
 # load
+$ createdb -U postgres denaro2
 $ psql -U postgres -d denaro2 < file.sql
 ```
