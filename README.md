@@ -26,16 +26,16 @@ cd denaro
 psql -d denaro2 -f schema.sql -U postgres
 sudo apt-get install python3-dev libgmp3-dev
 pip3 install -r requirements.txt
-uvicorn denaro.node.main:app --port 3002
+uvicorn config.asgi:application --port 3002
 ```
 
 Mine a coin:
 
 ```bash
-python denaro/wallet/wallet.py createwallet
+python wallets/wallet.py createwallet
 python miner.py DX9n7N3t3yBqdixnYHK4td6CPPcH3D8zsVcF6FQtvdQ6b
-python denaro/wallet/wallet.py send -to DYAYzytb555iszf7CryahqtSNwVNkyzSFaRSXYBXJzzsT -d 10
-python denaro/wallet/wallet.py balance
+python wallets/wallet.py send -to DYAYzytb555iszf7CryahqtSNwVNkyzSFaRSXYBXJzzsT -d 10
+python wallets/wallet.py balance
 ```
 
 See on explorer:
@@ -57,7 +57,7 @@ https://stackoverflow.com/a/68184694/2351696
 
 ```bash
 pip install gunicorn
-gunicorn denaro.node.main:app -w 1 --timeout 150 -k uvicorn.workers.UvicornWorker -b 127.0.0.1:3002 --daemon
+gunicorn config.asgi:application -w 1 --timeout 150 -k uvicorn.workers.UvicornWorker -b 127.0.0.1:3002 --daemon
 
 sudo a2enmod proxy_http
 <VirtualHost *:80>
